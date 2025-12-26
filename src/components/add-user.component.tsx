@@ -39,7 +39,6 @@ export default function NewForm({ onSubmitForm }: NewFormProps) {
   });
 
   const onSubmit: SubmitHandler<User> = (data: User) => {
-    console.log("42", data);
     const { name, city, states, country } = data;
     const method = state?.method;
     onSubmitForm({
