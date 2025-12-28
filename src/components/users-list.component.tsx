@@ -26,6 +26,7 @@ export default function UserList({ users, deleteUser }: UserListProps) {
   useEffect(() => {
     setFilterData(users);
   }, [users]);
+
   const deleteMethod = (user: User) => {
     deleteUser({ ...user });
   };
