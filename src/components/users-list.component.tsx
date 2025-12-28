@@ -10,7 +10,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import EditIcon from "@mui/icons-material/Edit";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 type UserListProps = {
   users: User[];
@@ -19,6 +21,11 @@ type UserListProps = {
 
 export default function UserList({ users, deleteUser }: UserListProps) {
   const navigation = useNavigate();
+  const [filterData, setFilterData] = useState<User[]>(users);
+
+  useEffect(() => {
+    setFilterData(users);
+  }, [users]);
   const deleteMethod = (user: User) => {
     deleteUser({ ...user });
   };
@@ -26,8 +33,51 @@ export default function UserList({ users, deleteUser }: UserListProps) {
   const updateMethod = (user: User) => {
     navigation("/add-new-user", { state: { user, method: "Update" } });
   };
+
+  const filterUser = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    const searchTerm = e.target.value.toLocaleLowerCase().trim();
+    if (searchTerm.length > 0) {
+      const userData = users;
+      const search = userData.filter((element) => {
+        return (
+          element.name.trim().toLowerCase().includes(searchTerm) ||
+          element.city.trim().toLowerCase().includes(searchTerm) ||
+          element.country.trim().toLowerCase().includes(searchTerm) ||
+          element.states.trim().toLowerCase().includes(searchTerm)
+        );
+      });
+
+      setFilterData(search);
+    } else {
+      setFilterData(users);
+    }
+  };
   return (
     <>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        mb={3}
+        p={2}
+      >
+        <Typography variant="h4" component="h1">
+          User List
+        </Typography>
+
+        <TextField
+          id="standard-basic"
+          label="Search User"
+          variant="standard"
+          onChange={filterUser}
+        />
+
+        <Button variant="contained" component={NavLink} to="/add-new-user">
+          Add New User
+        </Button>
+      </Box>
       <div style={{ padding: "15px" }}>
         <TableContainer component={Paper}>
           <Table
@@ -73,51 +123,61 @@ export default function UserList({ users, deleteUser }: UserListProps) {
             </TableHead>
 
             <TableBody>
-              {users.map((row) => (
-                <TableRow key={row.name}>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {row.name}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ border: "1px solid #e0e0e0" }}
-                  >
-                    {row.city}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ border: "1px solid #e0e0e0" }}
-                  >
-                    {row.states}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ border: "1px solid #e0e0e0" }}
-                  >
-                    {row.country}
-                  </TableCell>
+              {filterData.length > 0 ? (
+                filterData.map((row) => (
+                  <TableRow key={row.name}>
+                    <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                      {row.name}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ border: "1px solid #e0e0e0" }}
+                    >
+                      {row.city}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ border: "1px solid #e0e0e0" }}
+                    >
+                      {row.states}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ border: "1px solid #e0e0e0" }}
+                    >
+                      {row.country}
+                    </TableCell>
 
-                  <TableCell align="center">
-                    <Tooltip title="Delete">
-                      <IconButton>
-                        <DeleteIcon
-                          color="secondary"
-                          onClick={() => deleteMethod(row)}
-                        />
-                      </IconButton>
-                    </Tooltip>
+                    <TableCell align="center">
+                      <Tooltip title="Delete">
+                        <IconButton>
+                          <DeleteIcon
+                            color="secondary"
+                            onClick={() => deleteMethod(row)}
+                          />
+                        </IconButton>
+                      </Tooltip>
 
-                    <Tooltip title="Edit">
-                      <IconButton>
-                        <EditIcon
-                          color="secondary"
-                          onClick={() => updateMethod(row)}
-                        />
-                      </IconButton>
-                    </Tooltip>
+                      <Tooltip title="Edit">
+                        <IconButton>
+                          <EditIcon
+                            color="secondary"
+                            onClick={() => updateMethod(row)}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    {users.length === 0
+                      ? " No records found"
+                      : "No matching records"}
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>
