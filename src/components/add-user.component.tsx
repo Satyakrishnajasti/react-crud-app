@@ -5,7 +5,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import styles from "./add-user.module.css";
-import { useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Typography } from "@mui/material";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,10 +17,6 @@ type NewFormProps = {
 
 export default function NewForm({ onSubmitForm }: NewFormProps) {
   const { state } = useLocation();
-  // const [name, setName] = useState(state?.user.name);
-  // const [city, setCity] = useState(state?.user.city);
-  // const [states, setState] = useState(state?.user.states);
-  // const [country, setCountry] = useState(state?.user.country);
 
   const {
     register,
@@ -121,7 +117,23 @@ export default function NewForm({ onSubmitForm }: NewFormProps) {
                 helperText={errors.country?.message}
               />
 
-              <div style={{ textAlign: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  component={NavLink}
+                  to="/"
+                  type="submit"
+                  style={{ marginTop: "20px" }}
+                >
+                  Cancel
+                </Button>
+
                 <Button
                   variant="contained"
                   type="submit"
